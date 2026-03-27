@@ -176,9 +176,10 @@ async def delete_task(list_id: int, task_id: int):
 
 
 @route
-async def create_board(title: str):
+async def create_board(title: str, user_id: int):
     result = db_interactions.create_board(title)
-    return {"message": "Board created", "board_id": result}
+    db_interactions.add_board_member(result['id'], user_id)
+    return {"message": "Board created", "board": result}
 @route
 async def create_list(title: str, board_id: int):    
     result = db_interactions.create_list(title, board_id)

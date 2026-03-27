@@ -28,3 +28,9 @@ def create_board(cursor: sqlite3.Cursor, title: str):
     cursor.execute("INSERT INTO board (title) VALUES (?) returning id", (title,))
     cols =[col[0] for col in cursor.description]
     return map_row(cols, cursor.fetchone())
+
+
+@sqlite_cursor
+def add_board_member(cursor: sqlite3.Cursor, board_id: int, user_id: int):
+    cursor.execute("INSERT INTO board_members (board_id, user_id) VALUES (?, ?)", (board_id, user_id))
+    return cursor.rowcount

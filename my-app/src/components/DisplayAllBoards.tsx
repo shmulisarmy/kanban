@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { API_BASE_URL, our_url, user_id } from "../settings"
+import { create_board } from "../generated"
 
 
 
@@ -33,6 +34,20 @@ export default function DisplayAllBoards() {
           <button onClick={() => window.location.href = `/board/${board.id}/`}>Open</button>
         </div>
       ))}
+      <form style={{ marginTop: '20px', display: 'flex', gap: '10px' }} onSubmit={async (e) => {
+        e.preventDefault()
+        const formData = new FormData(e.target as HTMLFormElement)
+        const title = formData.get('title') as string
+        if (!title) return
+        const res = await create_board(title, user_id)
+        const board = (res as any).board
+        if (board?.id) {
+          window.location.href = `/board/${board.id}/`
+        }
+      }}>
+        <input type="text" name="title" placeholder="New board name" />
+        <button type="submit">Create Board</button>
+      </form>
     </div>
   )
 }

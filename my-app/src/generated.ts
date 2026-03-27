@@ -111,9 +111,9 @@ export async function delete_task(list_id: number, task_id: number) : Promise<un
     return res.json()
 }
 
-export async function create_board(title: string) : Promise<undefined> { 
+export async function create_board(title: string, user_id: number) : Promise<undefined> { 
     // LINK /Users/shmuli/repositories/kanban/main.py:178
-    const res = await fetch(`http://localhost:8001/create_board/${title}`, { 
+    const res = await fetch(`http://localhost:8001/create_board/${title}/${user_id}`, { 
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -123,7 +123,7 @@ export async function create_board(title: string) : Promise<undefined> {
 }
 
 export async function create_list(title: string, board_id: number) : Promise<undefined> { 
-    // LINK /Users/shmuli/repositories/kanban/main.py:182
+    // LINK /Users/shmuli/repositories/kanban/main.py:183
     const res = await fetch(`http://localhost:8001/create_list/${title}/${board_id}`, { 
         method: "GET",
         headers: {
@@ -134,7 +134,7 @@ export async function create_list(title: string, board_id: number) : Promise<und
 }
 
 export async function create_task(list_id: number, title: string) : Promise<undefined> { 
-    // LINK /Users/shmuli/repositories/kanban/main.py:188
+    // LINK /Users/shmuli/repositories/kanban/main.py:189
     const res = await fetch(`http://localhost:8001/create_task/${list_id}/${title}`, { 
         method: "GET",
         headers: {

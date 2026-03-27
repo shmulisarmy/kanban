@@ -1,0 +1,1 @@
+SELECT * FROM list where id = $1;

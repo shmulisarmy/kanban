@@ -1,0 +1,14 @@
+CREATE TABLE tasks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    
+    list_id INTEGER NOT NULL,
+    completed BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (list_id) REFERENCES list(id)
+);
+
+
+

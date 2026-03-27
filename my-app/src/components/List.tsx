@@ -1,6 +1,6 @@
 import type { Task } from "./ShowTasks";
 import { WS_BASE_URL } from "../settings";
-import UseChannelHook from "../hooks/ChannelHook";
+import ChannelHook from "../hooks/ChannelHook";
 import { toast } from "react-toastify";
 import { useState } from "react";
 import { TitleOrTextInput } from "./utils";
@@ -16,22 +16,22 @@ export type List  = {
 
 
 
-let currently_dragging_task_id: number | null = null
+let currently_dragging_task: {id: number, list_id: number} | null = null
 
 
 setInterval(() => {
-  console.log('currently_dragging_task_id', currently_dragging_task_id)
+  console.log('currently_dragging_task_id', currently_dragging_task)
 }, 100)
 
 
 
-function Task_C({task}: {task: Task}) {
+function Task_C({task, list_id}: {task: Task, list_id: number}) {
 return<div
 onDragStart={() => {
-  currently_dragging_task_id = task.id
+  currently_dragging_task = {id: task.id, list_id: list_id}
 }}
 onDragEnd={() => {
-  currently_dragging_task_id = null
+  currently_dragging_task = null
 }}
 draggable
 
@@ -50,15 +50,22 @@ key={task.id} style={{ marginBottom: '10px', padding: '5px', border: '1px solid 
 
 export function TaskList({list, board_id}: {list: List, board_id: number}) {
 
+  const ws_url = `${WS_BASE_URL}/list/${list.id}`  
+
   return <>
   <div 
   className='min-w-[300px] '
     onDragOver={(e) => {
-      if (!currently_dragging_task_id) {
+      e.preventDefault()
+    }}
+    onDrop={(e) => {
+      e.preventDefault()
+      if (!currently_dragging_task) {
         toast.error('No task is being dragged')
         return
       }
-      change_task_list(currently_dragging_task_id, list.id)
+      change_task_list(currently_dragging_task.id, currently_dragging_task.list_id, list.id)
+      currently_dragging_task = null
     }}
   style={{ marginBottom: '20px', padding: '10px', border: '1px solid #ccc', position: 'relative' }}>
     <TitleOrTextInput text={list.title} onChange={(new_title) => {
@@ -69,7 +76,7 @@ export function TaskList({list, board_id}: {list: List, board_id: number}) {
       remove_list(board_id, list.id)
     }}>X</button>
       
-   <TaskListTasks list={list} />
+   <TaskListTasks list={list} ws_url={ws_url} />
    <form action="" onSubmit={(e) => {
     e.preventDefault()
     const formData = new FormData(e.target as HTMLFormElement)
@@ -90,16 +97,16 @@ export function TaskList({list, board_id}: {list: List, board_id: number}) {
 
 
 
-export function TaskListTasks({list}: {list: List}) {
+export function TaskListTasks({list, ws_url}: {list: List, ws_url: string}) {
 
 
-  const tasks = UseChannelHook<Task>(`${WS_BASE_URL}/list/${list.id}`)
+  const tasks = ChannelHook<Task>(ws_url)
 
 
   return (
     <div className="list">    
       {Object.values(tasks).map((task) => (
-        <Task_C key={task.id} task={task} />
+        <Task_C key={task.id} task={task} list_id={list.id} />
       ))}
       </div>
     

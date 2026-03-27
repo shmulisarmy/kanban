@@ -54,8 +54,14 @@ async def root(request: Request):
 
 
 @route
-async def change_task_list(task_id: int, list_id: int):
-    db_interactions.change_task_list(task_id, list_id)
+async def change_task_list(task_id: int, old_list_id: int, new_list_id: int):
+    if old_list_id == new_list_id:
+        return {"message": "Task list unchanged"}
+    db_interactions.change_task_list(task_id, new_list_id)
+    old_channel = data_channel.DataChannel.get_or_create_channel(f"list/{old_list_id}", lambda: db_interactions.get_list_tasks(old_list_id))
+    new_channel = data_channel.DataChannel.get_or_create_channel(f"list/{new_list_id}", lambda: db_interactions.get_list_tasks(new_list_id))
+    await new_channel.create_row(old_channel.rows[task_id])
+    await old_channel.delete_row(task_id)
     return {"message": "Task list changed"}
 
 

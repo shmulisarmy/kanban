@@ -1,9 +1,9 @@
 import { API_BASE_URL } from './settings';
 
 
-export async function change_task_list(task_id: number, list_id: number) : Promise<undefined> { 
+export async function change_task_list(task_id: number, old_list_id: number, new_list_id: number) : Promise<undefined> { 
     // LINK /Users/shmuli/repositories/kanban/main.py:56
-    const res = await fetch(`http://localhost:8001/change_task_list/${task_id}/${list_id}`, { 
+    const res = await fetch(`http://localhost:8001/change_task_list/${task_id}/${old_list_id}/${new_list_id}`, { 
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -13,7 +13,7 @@ export async function change_task_list(task_id: number, list_id: number) : Promi
 }
 
 export async function remove_list(board_id: number, list_id: number) : Promise<undefined> { 
-    // LINK /Users/shmuli/repositories/kanban/main.py:69
+    // LINK /Users/shmuli/repositories/kanban/main.py:75
     const res = await fetch(`http://localhost:8001/remove_list/${board_id}/${list_id}`, { 
         method: "GET",
         headers: {
@@ -24,7 +24,7 @@ export async function remove_list(board_id: number, list_id: number) : Promise<u
 }
 
 export async function change_list_title(list_id: number, title: string) : Promise<undefined> { 
-    // LINK /Users/shmuli/repositories/kanban/main.py:76
+    // LINK /Users/shmuli/repositories/kanban/main.py:82
     const res = await fetch(`http://localhost:8001/change_list_title/${list_id}/${title}`, { 
         method: "GET",
         headers: {
@@ -35,7 +35,7 @@ export async function change_list_title(list_id: number, title: string) : Promis
 }
 
 export async function change_task_title(task_id: number, title: string) : Promise<undefined> { 
-    // LINK /Users/shmuli/repositories/kanban/main.py:81
+    // LINK /Users/shmuli/repositories/kanban/main.py:87
     const res = await fetch(`http://localhost:8001/change_task_title/${task_id}/${title}`, { 
         method: "GET",
         headers: {
@@ -46,7 +46,7 @@ export async function change_task_title(task_id: number, title: string) : Promis
 }
 
 export async function greeting(name: string) : Promise<undefined> { 
-    // LINK /Users/shmuli/repositories/kanban/main.py:87
+    // LINK /Users/shmuli/repositories/kanban/main.py:93
     const res = await fetch(`http://localhost:8001/greeting/${name}`, { 
         method: "GET",
         headers: {
@@ -57,7 +57,7 @@ export async function greeting(name: string) : Promise<undefined> {
 }
 
 export async function add(a: number, b: number) : Promise<number> { 
-    // LINK /Users/shmuli/repositories/kanban/main.py:100
+    // LINK /Users/shmuli/repositories/kanban/main.py:106
     const res = await fetch(`http://localhost:8001/add/${a}/${b}`, { 
         method: "GET",
         headers: {
@@ -68,7 +68,7 @@ export async function add(a: number, b: number) : Promise<number> {
 }
 
 export async function sub(a: number, b: number) : Promise<number> { 
-    // LINK /Users/shmuli/repositories/kanban/main.py:104
+    // LINK /Users/shmuli/repositories/kanban/main.py:110
     const res = await fetch(`http://localhost:8001/sub/${a}/${b}`, { 
         method: "GET",
         headers: {
@@ -79,7 +79,7 @@ export async function sub(a: number, b: number) : Promise<number> {
 }
 
 export async function board(board_id: number) : Promise<undefined> { 
-    // LINK /Users/shmuli/repositories/kanban/main.py:139
+    // LINK /Users/shmuli/repositories/kanban/main.py:145
     const res = await fetch(`http://localhost:8001/board/${board_id}`, { 
         method: "GET",
         headers: {
@@ -90,7 +90,7 @@ export async function board(board_id: number) : Promise<undefined> {
 }
 
 export async function tasks_get_tasks(user_name: string) : Promise<undefined> { 
-    // LINK /Users/shmuli/repositories/kanban/main.py:145
+    // LINK /Users/shmuli/repositories/kanban/main.py:151
     const res = await fetch(`http://localhost:8001/tasks_get_tasks/${user_name}`, { 
         method: "GET",
         headers: {
@@ -101,7 +101,7 @@ export async function tasks_get_tasks(user_name: string) : Promise<undefined> {
 }
 
 export async function delete_task(list_id: number, task_id: number) : Promise<undefined> { 
-    // LINK /Users/shmuli/repositories/kanban/main.py:164
+    // LINK /Users/shmuli/repositories/kanban/main.py:170
     const res = await fetch(`http://localhost:8001/delete_task/${list_id}/${task_id}`, { 
         method: "GET",
         headers: {
@@ -112,7 +112,7 @@ export async function delete_task(list_id: number, task_id: number) : Promise<un
 }
 
 export async function create_board(title: string) : Promise<undefined> { 
-    // LINK /Users/shmuli/repositories/kanban/main.py:172
+    // LINK /Users/shmuli/repositories/kanban/main.py:178
     const res = await fetch(`http://localhost:8001/create_board/${title}`, { 
         method: "GET",
         headers: {
@@ -123,7 +123,7 @@ export async function create_board(title: string) : Promise<undefined> {
 }
 
 export async function create_list(title: string, board_id: number) : Promise<undefined> { 
-    // LINK /Users/shmuli/repositories/kanban/main.py:176
+    // LINK /Users/shmuli/repositories/kanban/main.py:182
     const res = await fetch(`http://localhost:8001/create_list/${title}/${board_id}`, { 
         method: "GET",
         headers: {
@@ -134,7 +134,7 @@ export async function create_list(title: string, board_id: number) : Promise<und
 }
 
 export async function create_task(list_id: number, title: string) : Promise<undefined> { 
-    // LINK /Users/shmuli/repositories/kanban/main.py:182
+    // LINK /Users/shmuli/repositories/kanban/main.py:188
     const res = await fetch(`http://localhost:8001/create_task/${list_id}/${title}`, { 
         method: "GET",
         headers: {

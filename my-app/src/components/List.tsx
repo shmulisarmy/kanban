@@ -86,6 +86,7 @@ export function TaskList({ list, board_id }: { list: List; board_id: number }) {
         currentlyDragging = null
       }}
     >
+      {`${list.id}`}
       {/* Header */}
       <div className="column__header">
         <div className="column__header-left">

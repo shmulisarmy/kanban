@@ -1,3 +1,4 @@
+from typing import TypedDict
 import sqlite3
 from decorators import sqlite_cursor
 from data_channel import DataChannel
@@ -53,3 +54,16 @@ def change_task_title(cursor: sqlite3.Cursor, task_id: int, title: str):
     cursor.execute("UPDATE tasks SET title = ? WHERE id = ? returning *", (title, task_id))
     cols =[col[0] for col in cursor.description]
     return map_row(cols, cursor.fetchone())
+
+
+
+
+TaskType = TypedDict("TaskType", {"id": int, "title": str, "list_id": int, "user_id": int})
+
+@sqlite_cursor
+def get_all_tasks(cursor: sqlite3.Cursor) -> list[TaskType]:
+    cursor.execute("SELECT * FROM tasks")
+    res = cursor.fetchall()
+    assert type(res) == list
+    col_names = [desc[0] for desc in cursor.description]
+    return  map_rows(col_names=col_names, rows=res)

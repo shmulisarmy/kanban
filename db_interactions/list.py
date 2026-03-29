@@ -6,7 +6,7 @@ from db_interactions.utils import map_row, map_rows
 @sqlite_cursor
 def create_list(cursor: sqlite3.Cursor, title: str, board_id: int):
     print(f"{create_list.__name__} {locals()}")
-    cursor.execute("INSERT INTO list (title, board_id) VALUES (?, ?) returning id", (title, board_id))
+    cursor.execute("INSERT INTO list (title, board_id) VALUES (?, ?) returning *", (title, board_id))
     cols =[col[0] for col in cursor.description]
     return map_row(cols, cursor.fetchone())
 

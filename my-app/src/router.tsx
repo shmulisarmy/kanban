@@ -3,23 +3,29 @@ import ShowTasks from './components/ShowTasks'
 import Boards from './components/Boards'
 import Board from './components/Board'
 
-// Create the root route
 const rootRoute = createRootRoute({
   component: () => (
-    <div>
-      <div style={{ marginBottom: '20px' }}>
-        <Link to="/" style={{ marginRight: '20px' }}>Tasks</Link>
-        <Link to="/boards">Boards</Link>
-      </div>
-      <hr />
-      <div>
-        <Outlet />
-      </div>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <nav className="navbar">
+        <div className="navbar__brand">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+          </svg>
+          Kanban
+        </div>
+        <div className="navbar__links">
+          <Link to="/" className="nav-link">Tasks</Link>
+          <Link to="/boards" className="nav-link">Boards</Link>
+        </div>
+      </nav>
+      <Outlet />
     </div>
   ),
 })
 
-// Create the tasks route
 const all_routes = [
   createRoute({
     getParentRoute: () => rootRoute,
@@ -38,7 +44,6 @@ const all_routes = [
   })
 ]
 
-// Create the router
 const router = createRouter({
   routeTree: rootRoute.addChildren(all_routes),
 })

@@ -6,8 +6,8 @@ Project Description
 
 ### Todo
 
-- [ ] migrate over to vue  
 - [ ] migrate over to reactive nodes  
+- [ ] migrate over to vue  
 
 ### In Progress
 

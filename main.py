@@ -66,10 +66,6 @@ async def change_task_list(task_id: int, old_list_id: int, new_list_id: int):
 
 
 
-# @route
-# async def create_lis(username: str) -> int:
-#     return db_interactions.get_user_id(username)
-
 
 
 @route

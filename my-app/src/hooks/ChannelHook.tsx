@@ -24,11 +24,11 @@ export default function UseChannelHook<T extends {id: number}>(ws_url: string){
         setRows(data.data)
         break
       case 'create':
-        console.assert(!rows[data.data.id], `Row with id ${data.data.id} already exists in rows`)
+        console.assert(!(data.data.id in rows), `Row with id ${data.data.id} already exists in rows`)
         setRows(prev => ({...prev, [data.data.id]: data.data}))
         break 
       case 'update':
-        console.assert(rows[data.data.id], `Row with id ${data.data.id} not found in rows`)
+        console.assert(data.data.id in rows, `Row with id ${data.data.id} not found in rows`)
         setRows(prev => ({...prev, [data.data.id]: data.data}))
         break
       case 'delete':

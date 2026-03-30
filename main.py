@@ -3,8 +3,6 @@ from fastapi.responses import JSONResponse
 import route_plugin
 from route_plugin import route, init
 import settings
-from route_maker import make_url
-from generator import func_to_ts_code
 from fastapi import FastAPI, WebSocket, Request, Response
 from fastapi.responses import HTMLResponse
 from fastapi.websockets import WebSocketDisconnect, WebSocket
@@ -52,6 +50,32 @@ app.add_middleware(
 
 j = JsonCipher("djaislkdjgkldsajgkldsjakljdsklgjsdklajgklsddasggggggggggggggggdasdgsagdsagdsiaougdoisaugoidusagiodusgiousaioa")
 
+###
+import hasher
+
+@route
+async def me(request: Request):
+    authCookies = request.cookies.get("auth")
+    return {"message": "Hello World", "auth": j.decrypt(authCookies)}
+
+
+
+@route
+async def sign_up(request: Request, name: str, password: str):
+    user_id = db_interactions.user.create_user(name, hasher.hash(password))['id']
+    response = JSONResponse({"message": "Hello World"})
+    response.set_cookie(key="auth", value=j.encrypt({"user_id": user_id}), max_age=60*60*24*365)
+    return response
+
+@route
+async def sign_in(request: Request, name: str, password: str):
+    u = db_interactions.user.get_user(user_id)['id']
+    response = JSONResponse({"message": "Hello World"})
+    response.set_cookie(key="auth", value=j.encrypt({"user_id": user_id}), max_age=60*60*24*365)
+    return response
+
+###
+
 
 @app.get("/")
 async def root(request: Request):
@@ -72,19 +96,6 @@ async def change_task_list(task_id: int, old_list_id: int, new_list_id: int):
 
 
 
-
-@route
-async def me(request: Request):
-    authCookies = request.cookies.get("auth")
-    return {"message": "Hello World", "auth": j.decrypt(authCookies)}
-
-
-
-@route
-async def sign_in(request: Request):
-    response = JSONResponse({"message": "Hello World"})
-    response.set_cookie(key="auth", value=j.encrypt({"user_id": 1}), max_age=60*60*24*365)
-    return response
 
 
 @route

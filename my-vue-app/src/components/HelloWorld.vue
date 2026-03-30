@@ -5,6 +5,12 @@ import List from './List.vue';
 import { useRoute } from 'vue-router';
 import { create_list } from '../generated';
 
+
+
+
+
+
+
 type ListT = {
     id: number;
     title: string;

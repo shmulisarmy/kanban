@@ -1,4 +1,3 @@
-from typing import TypedDict
 import sqlite3
 from decorators import sqlite_cursor
 from db_interactions.utils import map_row, map_rows
@@ -29,14 +28,3 @@ def change_list_title(cursor: sqlite3.Cursor, list_id: int, title: str):
 def remove_list(cursor: sqlite3.Cursor, list_id: int):
     cursor.execute("DELETE FROM list WHERE id = ?", (list_id,))
     return cursor.rowcount
-
-
-ListType = TypedDict("ListType", {"id": int, "title": str, "board_id": int})
-
-
-@sqlite_cursor
-def get_all_lists(cursor: sqlite3.Cursor) -> list[ListType]:
-    cursor.execute("SELECT * FROM list")
-    res = cursor.fetchall()
-    col_names = [desc[0] for desc in cursor.description]
-    return  map_rows(col_names=col_names, rows=res)

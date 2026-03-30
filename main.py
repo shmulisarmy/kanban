@@ -1,8 +1,5 @@
-from setup_reactivity import lists_by_board
-from setup_reactivity import tasks_by_list
-import setup_reactivity
 import route_plugin
-from route_plugin import route
+from route_plugin import route, init
 import settings
 from route_maker import make_url
 from generator import func_to_ts_code
@@ -16,10 +13,6 @@ import sqlite3
 import data_channel
 import db_interactions
 from decorators import sqlite_cursor
-import setup_reactivity
-
-
-
 
 db_path = "database.db"
 
@@ -62,17 +55,13 @@ async def root(request: Request):
 
 @route
 async def change_task_list(task_id: int, old_list_id: int, new_list_id: int):
-    from setup_reactivity import tasks
     if old_list_id == new_list_id:
         return {"message": "Task list unchanged"}
-    # old_channel = data_channel.DataChannel.get_or_create_channel(f"list/{old_list_id}", lambda: db_interactions.get_list_tasks(old_list_id))
-    # new_channel = data_channel.DataChannel.get_or_create_channel(f"list/{new_list_id}", lambda: db_interactions.get_list_tasks(new_list_id))
-    old_channel = tasks_by_list.on(old_list_id)
-    task = list(filter(lambda x: x["id"] == task_id, old_channel.rows))[0]
-
-    new_task = db_interactions.change_task_list(task_id, new_list_id)
-    tasks.update_row(task, new_task)
-    # await old_channel.delete_row(task_id)
+    db_interactions.change_task_list(task_id, new_list_id)
+    old_channel = data_channel.DataChannel.get_or_create_channel(f"list/{old_list_id}", lambda: db_interactions.get_list_tasks(old_list_id))
+    new_channel = data_channel.DataChannel.get_or_create_channel(f"list/{new_list_id}", lambda: db_interactions.get_list_tasks(new_list_id))
+    await new_channel.create_row(old_channel.rows[task_id])
+    await old_channel.delete_row(task_id)
     return {"message": "Task list changed"}
 
 
@@ -122,17 +111,14 @@ def sub(a: int, b: int) -> int:
 async def list_channel(websocket: WebSocket, list_id: int):
     print("some is trying to connect")
     await websocket.accept()
-    # channel = data_channel.DataChannel.get_or_create_channel(f"list/{list_id}", lambda: db_interactions.get_list_tasks(list_id))
-    # await channel.on_join(websocket)
-
-
-    streamer = tasks_by_list.on(list_id).stream_to(websocket)
+    channel = data_channel.DataChannel.get_or_create_channel(f"list/{list_id}", lambda: db_interactions.get_list_tasks(list_id))
+    await channel.on_join(websocket)
     try:
         while True:
             data = await websocket.receive_json()
             print(f"recieved data: {data} from {websocket}")
     except WebSocketDisconnect as e:
-        streamer.subscribed_to.unsubscribe(streamer)
+        channel.connected_clients.remove(websocket)
 
 
     
@@ -142,16 +128,14 @@ async def list_channel(websocket: WebSocket, list_id: int):
 async def board_channel(websocket: WebSocket, board_id: int):
     print("some is trying to connect")
     await websocket.accept()
-    # channel = data_channel.DataChannel.get_or_create_channel(f"board/{board_id}", lambda: db_interactions.get_board_lists(board_id))
-    # await channel.on_join(websocket)
-
-    lists_by_board.on(board_id).stream_to(websocket)
+    channel = data_channel.DataChannel.get_or_create_channel(f"board/{board_id}", lambda: db_interactions.get_board_lists(board_id))
+    await channel.on_join(websocket)
     try:
         while True:
             data = await websocket.receive_json()
             print(f"recieved data: {data} from {websocket}")
     except WebSocketDisconnect as e:
-        pass
+        channel.connected_clients.remove(websocket)
 
 
 @route

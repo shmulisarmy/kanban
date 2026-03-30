@@ -17,7 +17,6 @@ export default function UseChannelHook<T extends {id: number}>(ws_url: string){
     console.log(`about to create connection to ws: ${ws_url}`)
     ws.current = new WebSocket(ws_url)
     ws.current.onmessage = function (event: MessageEvent) {
-      console.log('event data where ws_url is', ws_url, event.data)
     const data: Message = JSON.parse(event.data)
     console.log('message', data)
     switch (data.type) {

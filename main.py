@@ -1,3 +1,4 @@
+from typing import TypedDict
 from auth import JsonCipher
 from fastapi.responses import JSONResponse
 import route_plugin
@@ -51,29 +52,45 @@ app.add_middleware(
 j = JsonCipher("djaislkdjgkldsajgkldsjakljdsklgjsdklajgklsddasggggggggggggggggdasdgsagdsagdsiaougdoisaugoidusagiodusgiousaioa")
 
 ###
-import hasher
+from hasher import hash
 
 @route
 async def me(request: Request):
     authCookies = request.cookies.get("auth")
+    if not authCookies:
+        return {"message": "Hello World", "auth": None}
     return {"message": "Hello World", "auth": j.decrypt(authCookies)}
 
 
 
 @route
 async def sign_up(request: Request, name: str, password: str):
-    user_id = db_interactions.user.create_user(name, hasher.hash(password))['id']
-    response = JSONResponse({"message": "Hello World"})
+    user_id, created = db_interactions.user.create_user(name, hash(password))
+    if not created:
+        return {"message": "User name already exists"}
+    response = JSONResponse({"message": "User created"})
     response.set_cookie(key="auth", value=j.encrypt({"user_id": user_id}), max_age=60*60*24*365)
     return response
 
 @route
 async def sign_in(request: Request, name: str, password: str):
-    u = db_interactions.user.get_user(user_id)['id']
-    response = JSONResponse({"message": "Hello World"})
-    response.set_cookie(key="auth", value=j.encrypt({"user_id": user_id}), max_age=60*60*24*365)
-    return response
+    u: TypedDict['User', {'id': int, 'name': str, 'hashed_password': str}] | None = db_interactions.user.get_user_by_name(name)
+    if not u:
+        return {"message": "wrong username or password"}
+    if u['hashed_password'] == hash(password):
+        response = JSONResponse({"message": "User logged in"})
+        response.set_cookie(key="auth", value=j.encrypt({"user_id": u['id']}), max_age=60*60*24*365)
+        return response
+    return {"message": "password is incorrect"}
 
+
+
+
+@route
+async def sign_out(request: Request):
+    response = JSONResponse({"message": "User logged out"})
+    response.set_cookie(key="auth", value="", max_age=0)
+    return response
 ###
 
 

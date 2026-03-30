@@ -1,8 +1,8 @@
+from auth import JsonCipher
+from fastapi.responses import JSONResponse
 import route_plugin
 from route_plugin import route, init
 import settings
-from route_maker import make_url
-from generator import func_to_ts_code
 from fastapi import FastAPI, WebSocket, Request, Response
 from fastapi.responses import HTMLResponse
 from fastapi.websockets import WebSocketDisconnect, WebSocket
@@ -12,7 +12,6 @@ import sqlite3
 
 import data_channel
 import db_interactions
-from decorators import sqlite_cursor
 
 db_path = "database.db"
 
@@ -26,7 +25,7 @@ def get_db_cursor():
 
 
 app = FastAPI()
-route_plugin.init("my-app/src/generated.ts", app)
+route_plugin.init("my-vue-app/src/generated.ts", app)
 
 
 
@@ -35,8 +34,10 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        "http://localhost:5174",
         "http://localhost:5001",
         "ws://localhost:5173",
+        "ws://localhost:5174",
         "ws://127.0.0.1:5173",
         "ws://localhost:5001",
     ],
@@ -45,6 +46,35 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+
+j = JsonCipher("djaislkdjgkldsajgkldsjakljdsklgjsdklajgklsddasggggggggggggggggdasdgsagdsagdsiaougdoisaugoidusagiodusgiousaioa")
+
+###
+import hasher
+
+@route
+async def me(request: Request):
+    authCookies = request.cookies.get("auth")
+    return {"message": "Hello World", "auth": j.decrypt(authCookies)}
+
+
+
+@route
+async def sign_up(request: Request, name: str, password: str):
+    user_id = db_interactions.user.create_user(name, hasher.hash(password))['id']
+    response = JSONResponse({"message": "Hello World"})
+    response.set_cookie(key="auth", value=j.encrypt({"user_id": user_id}), max_age=60*60*24*365)
+    return response
+
+@route
+async def sign_in(request: Request, name: str, password: str):
+    u = db_interactions.user.get_user(user_id)['id']
+    response = JSONResponse({"message": "Hello World"})
+    response.set_cookie(key="auth", value=j.encrypt({"user_id": user_id}), max_age=60*60*24*365)
+    return response
+
+###
 
 
 @app.get("/")
@@ -77,14 +107,20 @@ async def remove_list(board_id: int, list_id: int):
 
 @route
 async def change_list_title(list_id: int, title: str):
-    db_interactions.change_list_title(list_id, title)
+    new_list = db_interactions.change_list_title(list_id, title)
+    print(f'{new_list = }')
+    
+    channel = data_channel.DataChannel.get_or_create_channel(f"board/{new_list['board_id']}", lambda: db_interactions.get_board_lists(new_list['board_id']))
+    await channel.update_row(list_id, new_list)
     return {"message": "List title changed"}
 
 @route
-def change_task_title(task_id: int, title: str):
+async def change_task_title(task_id: int, title: str):
     row = db_interactions.change_task_title(task_id, title)
+    print(f'{row = }')
+    
     channel = data_channel.DataChannel.get_or_create_channel(f"list/{row['list_id']}", lambda: db_interactions.get_list_tasks(row['list_id']))
-    channel.update_row(task_id, row)
+    await channel.update_row(task_id, row)
     return {"message": "Task title changed"}
 @route
 async def greeting(request: Request, name: str):
@@ -149,8 +185,9 @@ async def tasks_get_tasks(user_name: str):
     return db_interactions.get_users_tasks(user_name)
 
 
-@app.get("/boards/{user_id}")
-async def boards_get_boards(user_id: int):
+
+@route
+async def get_user_boards(user_id: int):
     return db_interactions.get_users_boards(user_id)
 
 # @app.websocket("/list/{list_id}")

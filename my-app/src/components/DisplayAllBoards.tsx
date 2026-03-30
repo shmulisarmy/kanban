@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { API_BASE_URL, user_id } from "../settings"
-import { create_board } from "../generated"
+import { get_user_boards } from "../generated"
 
 type Board = {
   id: number
@@ -12,9 +12,7 @@ export default function DisplayAllBoards() {
   const [showForm, setShowForm] = useState(false)
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/boards/${user_id}`)
-      .then(res => res.json())
-      .then(data => setBoards(data))
+      get_user_boards(user_id).then(data => setBoards(data))
   }, [])
 
   return (

@@ -21,8 +21,9 @@ def get_board_lists(cursor: sqlite3.Cursor, board_id: int):
 
 @sqlite_cursor
 def change_list_title(cursor: sqlite3.Cursor, list_id: int, title: str):
-    cursor.execute("UPDATE list SET title = ? WHERE id = ?", (title, list_id))
-    return cursor.rowcount
+    cursor.execute("UPDATE list SET title = ? WHERE id = ? returning *", (title, list_id))
+    cols =[col[0] for col in cursor.description]
+    return map_row(cols, cursor.fetchone())
 
 @sqlite_cursor
 def remove_list(cursor: sqlite3.Cursor, list_id: int):

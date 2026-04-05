@@ -1,3 +1,4 @@
+from fastapi.responses import FileResponse
 from typing import TypedDict
 from auth import JsonCipher
 from fastapi.responses import JSONResponse
@@ -69,21 +70,25 @@ async def sign_up(request: Request, name: str, password: str):
     if not created:
         return {"message": "User name already exists"}
     response = JSONResponse({"message": "User created"})
-    response.set_cookie(key="auth", value=j.encrypt({"user_id": user_id}), max_age=60*60*24*365)
+    response.set_cookie(key="auth", value=j.encrypt({"id": user_id, "name": name}), max_age=60*60*24*365)
     return response
 
 @route
 async def sign_in(request: Request, name: str, password: str):
     u: TypedDict['User', {'id': int, 'name': str, 'hashed_password': str}] | None = db_interactions.user.get_user_by_name(name)
     if not u:
-        return {"message": "wrong username or password"}
+        return {"message": "username not found"}
     if u['hashed_password'] == hash(password):
-        response = JSONResponse({"message": "User logged in"})
-        response.set_cookie(key="auth", value=j.encrypt({"user_id": u['id']}), max_age=60*60*24*365)
+        response = JSONResponse({"message": "User logged in", "auth": {"id": u['id'], "name": u['name']}})
+        response.set_cookie(key="auth", value=j.encrypt({"id": u['id'], "name": u['name']}), max_age=60*60*24*365)
         return response
-    return {"message": "password is incorrect"}
+    return {"message": "incorrect password"}
 
 
+
+@route
+async def get_user_avatar(user_id: int) -> FileResponse:
+    return FileResponse(f"profiles/{user_id}.jpg")
 
 
 @route
@@ -143,14 +148,6 @@ async def change_task_title(task_id: int, title: str):
 async def greeting(request: Request, name: str):
     authCookies = request.cookies.get("auth")
     return {"message": f"Hello {name}"}
-
-@app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
-    print("some is trying to connect")
-    await websocket.accept()
-    while True:
-        data = await websocket.receive_text()
-        await websocket.send_text(f"Message text was: {data}")
 
 @route
 def add(a: int, b: int) -> int:

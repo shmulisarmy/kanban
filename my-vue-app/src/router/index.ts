@@ -10,6 +10,10 @@ const routes = [
   {
     path: '/boards',
     component: () => import('../components/boards.vue')
+  },
+  {
+    path: '/sign-in',
+    component: () => import('../components/sign-in-page.vue')
   }
 ]
 

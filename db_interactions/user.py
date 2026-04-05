@@ -35,4 +35,5 @@ def get_user(cursor: sqlite3.Cursor, id: int):
 def get_user_by_name(cursor: sqlite3.Cursor, name: str):
     cursor.execute("select * from user where name = ?", (name,))
     cols =[col[0] for col in cursor.description]
-    return map_row(cols, cursor.fetchone())
+    userRow = cursor.fetchone()
+    return map_row(cols, userRow) if userRow else None

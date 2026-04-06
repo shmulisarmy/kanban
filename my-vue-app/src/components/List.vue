@@ -23,7 +23,7 @@ const props = defineProps<{
     board_id: number;
 }>()
 
-const [tasks, ws] = UseChannelHook<Task>(`ws://localhost:8080/list/${props.list_id}`)
+const [tasks, ws] = UseChannelHook<Task>(`${WS_BASE_URL}/list/${props.list_id}`)
 
 onUnmounted(() => {
     ws.close();
@@ -179,4 +179,5 @@ function onColumnDrop(e: DragEvent) {
       </form>
     </div>
   </div>
-</template>
+</template>import type { WS_BASE_URL } from '../settings'
+

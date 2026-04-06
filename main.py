@@ -40,10 +40,6 @@ app.add_middleware(
         "http://127.0.0.1:5173",
         "http://localhost:5174",
         "http://localhost:5001",
-        "ws://localhost:5173",
-        "ws://localhost:5174",
-        "ws://127.0.0.1:5173",
-        "ws://localhost:5001",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -83,7 +79,7 @@ async def sign_up(request: Request, name: str, password: str):
     if not created:
         return {"message": "User name already exists"}
     response = JSONResponse({"message": "User created"})
-    response.set_cookie(key="auth", value=j.encrypt({"id": user_id, "name": name}), max_age=60*60*24*365, path="/")
+    response.set_cookie(key="auth", value=j.encrypt({"id": user_id, "name": name}), max_age=60*60*24*365, path="/", samesite="none", secure=True)
     return response
 
 @route
@@ -93,7 +89,7 @@ async def sign_in(request: Request, name: str, password: str):
         return {"message": "username not found"}
     if u['hashed_password'] == hash(password):
         response = JSONResponse({"message": "User logged in", "auth": {"id": u['id'], "name": u['name']}})
-        response.set_cookie(key="auth", value=j.encrypt({"id": u['id'], "name": u['name']}), max_age=60*60*24*365, path="/")
+        response.set_cookie(key="auth", value=j.encrypt({"id": u['id'], "name": u['name']}), max_age=60*60*24*365, path="/", samesite="none", secure=True)
         return response
     return {"message": "incorrect password"}
 
@@ -111,7 +107,7 @@ async def get_user_avatar(user_id: int) -> FileResponse:
 @route
 async def sign_out(request: Request) -> JSONResponse:
     response = JSONResponse({"message": "User logged out"})
-    response.set_cookie(key="auth", value="", max_age=0)
+    response.set_cookie(key="auth", value="", max_age=0, path="/", samesite="none", secure=True)
     return response
 ###
 
@@ -234,4 +230,6 @@ async def create_task(list_id: int, title: str, auth: dict = Depends(get_auth)):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=settings.port, reload=True)
+    import os
+    is_production = os.environ.get("RAILWAY_ENVIRONMENT") or os.environ.get("PORT")
+    uvicorn.run("main:app", host="0.0.0.0", port=settings.port, reload=not is_production)

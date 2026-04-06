@@ -1,5 +1,5 @@
-const API_BASE_URL = 'http://127.0.0.1:8080';
-const WS_BASE_URL = 'wss://127.0.0.1:8080';
+const API_BASE_URL = 'https://kanban-production-7648.up.railway.app';
+const WS_BASE_URL = 'wss://kanban-production-7648.up.railway.app';
 const user_id = 1
 
 

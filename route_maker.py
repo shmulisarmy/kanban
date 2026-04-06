@@ -1,3 +1,4 @@
+from typing import Callable
 import settings
 def make_url(func: Callable, params: dict) -> str:
     if "return" in params:

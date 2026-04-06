@@ -2,7 +2,6 @@
 import { ref } from 'vue';
 import { get_user_boards, create_board } from '../generated';
 import { authStore } from '../auth_store';
-import type router from '../router';
 
 type Board = {
     id: number;

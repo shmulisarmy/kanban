@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { authStore } from './auth_store';
+import { authStore, type AuthDetails } from './auth_store';
 import { API_BASE_URL } from './settings';
 import { me, sign_out } from './generated';
 
@@ -9,16 +9,16 @@ const router = useRouter();
 const showProfileMenu = ref(false);
 
 function signOut() {
-  sign_out().then(response => {
+  sign_out().then(() => {
     authStore.user = null;
     router.push('/sign-in');
   });
 }
 
-me().then((response) => {
-  console.log('me response:', response);
-  if (response.auth) {
-    authStore.user = response.auth;
+(me() as unknown as Promise<{ auth?: AuthDetails["user"]; message?: string }>).then((data) => {
+  console.log('me response:', data);
+  if (data.auth) {
+    authStore.user = data.auth;
   }
 });
 
@@ -139,8 +139,4 @@ me().then((response) => {
 .profile-menu__signout:hover {
   background: var(--danger-subtle);
 }
-</style>import type { sign_in } from './generated';
-import type { me } from './generated';
-import type { me } from './generated';
-import type { me } from './generated';
-, sign_out
+</style>

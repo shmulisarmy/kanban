@@ -7,9 +7,9 @@ const router = useRouter();
 
 function handleLogin(e: Event) {
   const form = e.target as HTMLFormElement
-  const username = form.username.value
-  const password = form.password.value
-  sign_in(username, password).then((data: { auth: AuthDetails["user"]; message: string }) => {
+  const username: string = form.username.value
+  const password: string = form.password.value
+  sign_in(username, password).then((data) => {
     authStore.user = data.auth ?? null
     if (data.auth) {
       if (authStore.redirectAfterLogin) {

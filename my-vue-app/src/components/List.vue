@@ -2,6 +2,7 @@
 import { onUnmounted, ref } from 'vue'
 import UseChannelHook from '../ChannelHook'
 import InlineEdit from './InlineEdit.vue'
+import { WS_BASE_URL } from '../settings'
 import {
   create_task,
   delete_task,
@@ -180,4 +181,5 @@ function onColumnDrop(e: DragEvent) {
     </div>
   </div>
 </template>import type { WS_BASE_URL } from '../settings'
+import type { WS_BASE_URL } from '../settings'
 

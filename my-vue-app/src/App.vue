@@ -3,15 +3,26 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { authStore } from './auth_store';
 import { API_BASE_URL } from './settings';
+import { me, sign_out } from './generated';
 
 const router = useRouter();
 const showProfileMenu = ref(false);
 
 function signOut() {
-  authStore.user = null;
-  showProfileMenu.value = false;
-  router.push('/sign-in');
+  sign_out().then(response => {
+    authStore.user = null;
+    router.push('/sign-in');
+  });
 }
+
+me().then((response) => {
+  console.log('me response:', response);
+  if (response.auth) {
+    authStore.user = response.auth;
+  }
+});
+
+
 </script>
 
 <template>
@@ -128,4 +139,8 @@ function signOut() {
 .profile-menu__signout:hover {
   background: var(--danger-subtle);
 }
-</style>
+</style>import type { sign_in } from './generated';
+import type { me } from './generated';
+import type { me } from './generated';
+import type { me } from './generated';
+, sign_out

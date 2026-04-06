@@ -37,7 +37,8 @@ export async function {func.__name__}{args_str} : Promise<{return_type}> {{
         headers: {{
             "Content-Type": "application/json",
         }},
-}})
+        credentials: "include",
+    }})
     return res.json()
 }}
 """

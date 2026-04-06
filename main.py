@@ -7,14 +7,12 @@ from fastapi.responses import JSONResponse
 import route_plugin
 from route_plugin import route, init
 import settings
-from fastapi import FastAPI, WebSocket, Request, Response
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, WebSocket, Request
 from fastapi.websockets import WebSocketDisconnect, WebSocket
 from fastapi.exceptions import HTTPException
 
 from fastapi.middleware.cors import CORSMiddleware
 import sqlite3
-import os
 
 import data_channel
 import db_interactions

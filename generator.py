@@ -3,7 +3,6 @@
 from typing import Callable
 
 from route_maker import make_ts_url
-from route_maker import make_url
 API_URL = "http://localhost:8001"
 ts_type_map = {
     int: "number",

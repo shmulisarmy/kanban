@@ -1,5 +1,9 @@
+from typing import Callable
+
+from fastapi import FastAPI
 from route_maker import make_url
 from generator import func_to_ts_code
+
 ts_generated_file: str | None = None
 app: FastAPI | None = None
 
@@ -23,7 +27,6 @@ def route(func: Callable):
     assert app is not None, "app must be set before using @route"
     assert ts_generated_file is not None, "ts_generated_file must be set before using @route"
     file, line = func.__code__.co_filename, func.__code__.co_firstlineno
-    col = len("def ") + len(func.__name__) + 1
     file_line = f"{file}:{line}"
     params = dict(func.__annotations__)
     with open(ts_generated_file, "a") as f:

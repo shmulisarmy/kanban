@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import  { sign_in } from '../generated';
-import { authStore, type AuthDetails } from '../auth_store';
+import { authStore } from '../auth_store';
 
 const router = useRouter();
 

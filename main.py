@@ -1,3 +1,4 @@
+from utils import mustGetenv
 from fastapi import Depends
 from fastapi.responses import FileResponse
 from typing import TypedDict
@@ -13,6 +14,7 @@ from fastapi.exceptions import HTTPException
 
 from fastapi.middleware.cors import CORSMiddleware
 import sqlite3
+import os
 
 import data_channel
 import db_interactions
@@ -52,7 +54,7 @@ app.add_middleware(
 
 
 
-j = JsonCipher("djaislkdjgkldsajgkldsjakljdsklgjsdklajgklsddasggggggggggggggggdasdgsagdsagdsiaougdoisaugoidusagiodusgiousaioa")
+j = JsonCipher(mustGetenv("JSON_CIPHER_KEY"))
 
 ###
 from hasher import hash

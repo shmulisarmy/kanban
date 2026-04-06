@@ -4,8 +4,7 @@ import UseChannelHook from '../ChannelHook'
 import List from './List.vue';
 import { useRoute } from 'vue-router';
 import { create_list, get_board_title } from '../generated';
-
-
+import  { WS_BASE_URL } from '../settings'
 
 
 const boardName = ref<string | null>(null)
@@ -20,7 +19,7 @@ type ListT = {
 const boardId = parseInt(useRoute().params.boardId as string)
 console.assert(!isNaN(boardId), 'boardId is not a number')
 
-const [lists, ws] = UseChannelHook<ListT>(`ws://localhost:8080/board/${boardId}`)
+const [lists, ws] = UseChannelHook<ListT>(`${WS_BASE_URL}/board/${boardId}`)
 
   get_board_title(boardId).then((title) => {
     boardName.value = title

@@ -3,11 +3,12 @@ import { onUnmounted, ref } from 'vue'
 import UseChannelHook from '../ChannelHook'
 import List from './List.vue';
 import { useRoute } from 'vue-router';
-import { create_list } from '../generated';
+import { create_list, get_board_title } from '../generated';
 
 
 
 
+const boardName = ref<string | null>(null)
 
 
 
@@ -21,11 +22,18 @@ console.assert(!isNaN(boardId), 'boardId is not a number')
 
 const [lists, ws] = UseChannelHook<ListT>(`ws://localhost:8080/board/${boardId}`)
 
+  get_board_title(boardId).then((title) => {
+    boardName.value = title
+})
+
 onUnmounted(() => {
     ws.close();
 })
 
 const showAddList = ref(false)
+
+
+
 
 function handleCreateList(e: Event) {
   e.preventDefault()
@@ -39,6 +47,9 @@ function handleCreateList(e: Event) {
 </script>
 
 <template>
+  <div v-if="boardName" class="board-header">
+    <h1 class="board-title">{{ boardName }}</h1>
+  </div>
   <div class="board-view">
     <div class="board-columns">
       <List

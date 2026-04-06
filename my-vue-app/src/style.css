@@ -492,6 +492,18 @@ input:focus {
    Board View (Kanban)
    ============================================ */
 
+.board-header {
+  padding: 1.25rem 1.25rem 0;
+}
+
+.board-title {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
 .board-view {
   flex: 1;
   padding: 1.25rem;

@@ -2,6 +2,7 @@ import { reactive, ref } from 'vue'
 
 
 export type AuthDetails = {
+    redirectAfterLogin: string | null;
     user: {
         id: string;
         name: string;
@@ -9,5 +10,7 @@ export type AuthDetails = {
 }
 
 export const authStore = reactive<AuthDetails>({ 
+    redirectAfterLogin: null,
     user: null
  })
+

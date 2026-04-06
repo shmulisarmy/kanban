@@ -12,7 +12,12 @@ function handleLogin(e: Event) {
   sign_in(username, password).then((data: { auth: AuthDetails["user"]; message: string }) => {
     authStore.user = data.auth ?? null
     if (data.auth) {
-      router.push('/boards')
+      if (authStore.redirectAfterLogin) {
+        router.push(authStore.redirectAfterLogin);
+        authStore.redirectAfterLogin = null;
+      } else {
+        router.push('/boards')
+      }
     } else {
       alert(data.message)
     }

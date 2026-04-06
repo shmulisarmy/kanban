@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { get_user_boards, create_board } from '../generated';
+import { authStore } from '../auth_store';
+import type router from '../router';
 
 type Board = {
     id: number;
@@ -36,9 +38,10 @@ async function handleCreateBoard(e: Event) {
       <router-link
         v-for="(board, index) in Object.values(boards)"
         :key="board.id"
-        :to="`/board/${board.id}`"
+        :to="authStore?.user?.id ? `/board/${board.id}` : '/sign-in'"
         class="board-card"
         :style="{ animationDelay: `${index * 60}ms` }"
+        @click="function(){if (!authStore?.user?.id) {authStore.redirectAfterLogin = `/board/${board.id}`}}"
       >
         <div class="board-card__icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -50,8 +53,13 @@ async function handleCreateBoard(e: Event) {
         </div>
         <h2 class="board-card__title">{{ board.title }}</h2>
         <div class="board-card__footer">
-          <span>Board</span>
-          <span class="board-card__arrow">&rarr;</span>
+          <template v-if="authStore?.user?.id">
+            <span>Board</span>
+            <span class="board-card__arrow">&rarr;</span>
+          </template>
+          <template v-else>
+            <span>Sign in to access</span>
+          </template>
         </div>
       </router-link>
 
@@ -81,3 +89,4 @@ async function handleCreateBoard(e: Event) {
     </div>
   </div>
 </template>
+
